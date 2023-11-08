@@ -116,10 +116,10 @@ function putMines(board) {
 }
 
 function expandShown(board, elCell, i, j) {
-  console.log(board)
-  console.log(elCell)
-  console.log(i)
-  console.log(j)
+  // console.log(board)
+  // console.log(elCell)
+  // console.log(i)
+  // console.log(j)
   var rowIdx = i
   var colIdx = j
   var board = board
@@ -131,7 +131,7 @@ function expandShown(board, elCell, i, j) {
       if (j < 0 || j >= board[0].length) continue
       if (i === rowIdx && j === colIdx) continue
       var currCell = board[i][j]
-      console.log(currCell, i, j)
+      // console.log(currCell, i, j)
       if (!currCell.isMine) {
         const curr = document.querySelector(`[data-i="${i}"][data-j="${j}"]`)
         // console.log(curr)
