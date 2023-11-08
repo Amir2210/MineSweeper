@@ -1,0 +1,31 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background-color: rgb(255, 255, 255);
+  color: black;
+  text-align: center;
+}
+
+table {
+  margin: auto;
+}
+
+.cell {
+  width: 60px;
+  height: 60px;
+  cursor: pointer;
+}
+
+.floor {
+  background-color: rgb(187, 171, 202);
+}
+
+.mine {
+  background-color: red;
+}
+
+.hidden {
+  display: none;
+}
