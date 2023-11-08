@@ -22,6 +22,10 @@ table {
   background-color: rgb(187, 171, 202);
 }
 
+.revealed {
+  background-color: aqua;
+}
+
 .mine {
   background-color: red;
 }

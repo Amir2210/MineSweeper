@@ -50,15 +50,13 @@ function renderBoard(board) {
     for (var j = 0; j < board[0].length; j++) {
       const currCell = board[i][j]
       var cellClass = getClassName({ i, j })
-      currCell.isMine ? (cellClass += " mine") : (cellClass += " floor")
+      // currCell.isMine ? (cellClass += " floor ") : (cellClass += " floor")
+      cellClass += " floor "
       strHTML += `\t<td class="cell ${cellClass}" onclick="cellClick(this, ${i},${j})">`
-      if (currCell.isMine) {
-        strHTML += MINE
-      }
+      // if (currCell.isMine) {
+      //   strHTML += MINE
+      // }
       strHTML += FLOOR
-      if (!currCell.isMine) {
-        strHTML += currCell.minesAroundCount
-      }
       strHTML += "</td>\n"
     }
     strHTML += "</tr>\n"
@@ -70,8 +68,15 @@ function renderBoard(board) {
 
 function cellClick(elCell, rowIdx, colIdx) {
   console.log(elCell)
-  // console.log(rowIdx)
-  // console.log(colIdx)
+  console.log(gBoard[rowIdx][colIdx])
+  if (!gBoard[rowIdx][colIdx].isMine) {
+    elCell.innerText = gBoard[rowIdx][colIdx].minesAroundCount
+  }
+  if (gBoard[rowIdx][colIdx].isMine) {
+    elCell.innerText = MINE
+    elCell.classList.add("mine")
+  }
+  elCell.classList.add("revealed")
 }
 
 function setMinesNegsCount(board) {
@@ -94,19 +99,3 @@ function setMinesNegsCount(board) {
     }
   }
 }
-
-// function neighboursCounter(row, col, bor) {
-//   var counter = 0
-//   for (var i = row - 1; i <= row + 1; i++) {
-//     if (i < 0 || i >= bor.length) continue
-
-//     for (var j = col - 1; j <= col + 1; j++) {
-//       if (j < 0 || j >= bor[0].length) continue
-//       if (i === row && j === col) continue
-//       var currCell = bor[i][j]
-//       // console.log(currCell)
-//       if (currCell.isMine) counter++
-//     }
-//   }
-//   counter++
-// }
