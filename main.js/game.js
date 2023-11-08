@@ -3,12 +3,13 @@
 const MINE = "💣"
 const FLOOR = " "
 const gLevel = {
-  SIZE: 4,
+  SIZE: 6,
   MINES: 2
 }
 
 var gBoard
 var gGame
+var gElSelectedCell = null
 function initGame() {
   gGame = {
     isOn: false,
@@ -18,14 +19,8 @@ function initGame() {
     isFirstClick: true
   }
   gBoard = buildBoard()
-  // setMinesNegsCount(gBoard)
   renderBoard(gBoard)
   setMinesNegsCount(gBoard)
-  // gBoard[findEmptyCell()][findEmptyCell()].isMine = true
-  // console.log(gBoard[3][3])
-  // console.log("gBoard[0][0] :", gBoard[0][0].i)
-  // console.log(setMinesNegsCount(gBoard, gBoard[0][1]))
-  // console.log("gBoard[0][1].minesAroundCount :", gBoard[0][1].minesAroundCount)
 }
 
 function buildBoard() {
@@ -43,10 +38,6 @@ function buildBoard() {
       board[i][j] = cell
     }
   }
-  // board[getRandomInt(0, 4)][getRandomInt(0, 4)].isMine = true
-  // board[getRandomInt(0, 4)][getRandomInt(0, 4)].isMine = true
-  // board[getRandomInt(0, 4)][getRandomInt(0, 4)].isMine = true
-
   putMines(board)
   return board
 }
@@ -76,11 +67,27 @@ function renderBoard(board) {
 
 function cellClick(elCell, rowIdx, colIdx) {
   console.log(elCell)
+  console.log(+elCell.dataset.i, +elCell.dataset.j)
+  // if (
+  //   +elCell.dataset.i === gElSelectedCell.i &&
+  //   +elCell.dataset.j === gElSelectedCell.j
+  // )
+  //   return
   var board = gBoard
-  if (!gBoard[rowIdx][colIdx].isMine) {
+  if (!gBoard[rowIdx][colIdx].isMine && gGame.isFirstClick) {
+    gGame.isFirstClick = false
+    gElSelectedCell = gBoard[rowIdx][colIdx]
+    console.log(gElSelectedCell.i, gElSelectedCell.j)
+  } else {
     elCell.innerText = gBoard[rowIdx][colIdx].minesAroundCount
   }
-  if (gBoard[rowIdx][colIdx].isMine) {
+  if (gBoard[rowIdx][colIdx].isMine && gGame.isFirstClick) {
+    gElSelectedCell = gBoard[rowIdx][colIdx]
+    gGame.isFirstClick = false
+    board[rowIdx][colIdx].isMine = false
+    elCell.classList.add("revealed")
+    elCell.innerText = ""
+  } else if (gBoard[rowIdx][colIdx].isMine) {
     elCell.innerText = MINE
     elCell.classList.add("mine")
   }
@@ -113,13 +120,13 @@ function putMines(board) {
   board[0][0].isMine = true
   board[2][2].isMine = true
   board[3][3].isMine = true
+
+  // board[getRandomInt(0, 4)][getRandomInt(0, 4)].isMine = true
+  // board[getRandomInt(0, 4)][getRandomInt(0, 4)].isMine = true
+  // board[getRandomInt(0, 4)][getRandomInt(0, 4)].isMine = true
 }
 
 function expandShown(board, elCell, i, j) {
-  // console.log(board)
-  // console.log(elCell)
-  // console.log(i)
-  // console.log(j)
   var rowIdx = i
   var colIdx = j
   var board = board
