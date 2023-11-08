@@ -3,13 +3,32 @@
 }
 
 body {
-  background-color: rgb(255, 255, 255);
-  color: black;
+  background-color: #333;
+  color: #fff;
   text-align: center;
 }
 
-table {
+/* table {
   margin: auto;
+  border: 3px solid red;
+} */
+
+table,
+td {
+  margin: auto;
+  border: 5px solid red;
+  padding: 0.1rem;
+  border-radius: 10px;
+}
+
+.board td {
+  width: 50px;
+  height: 50px;
+  transition: 0.5s;
+  text-align: center;
+  border: 7px solid #333;
+  border-radius: 10px;
+  color: black;
 }
 
 .cell {
@@ -19,11 +38,11 @@ table {
 }
 
 .floor {
-  background-color: rgb(187, 171, 202);
+  background-color: rgb(117, 82, 150);
 }
 
 .revealed {
-  background-color: aqua;
+  background-color: rgb(0, 255, 255);
 }
 
 .mine {
@@ -32,4 +51,14 @@ table {
 
 .hidden {
   display: none;
+}
+
+footer {
+  border: 5px solid red;
+  position: absolute;
+  bottom: 0;
+  padding: 2rem;
+  width: 99%;
+  background-color: #333;
+  color: #fff;
 }

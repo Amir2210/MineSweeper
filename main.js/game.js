@@ -11,12 +11,10 @@ var gBoard
 
 function initGame() {
   gBoard = buildBoard()
-  renderBoard(gBoard)
-
-  // console.log(gBoard[0][1])
   setMinesNegsCount(gBoard)
   renderBoard(gBoard)
-  console.log(gBoard[3][3])
+  // gBoard[findEmptyCell()][findEmptyCell()].isMine = true
+  // console.log(gBoard[3][3])
   // console.log("gBoard[0][0] :", gBoard[0][0].i)
   // console.log(setMinesNegsCount(gBoard, gBoard[0][1]))
   // console.log("gBoard[0][1].minesAroundCount :", gBoard[0][1].minesAroundCount)
@@ -37,9 +35,13 @@ function buildBoard() {
       board[i][j] = cell
     }
   }
+  // board[getRandomInt(0, 4)][getRandomInt(0, 4)].isMine = true
+  // board[getRandomInt(0, 4)][getRandomInt(0, 4)].isMine = true
+  // board[getRandomInt(0, 4)][getRandomInt(0, 4)].isMine = true
   board[0][0].isMine = true
-  board[3][3].isMine = true
   board[2][2].isMine = true
+  board[3][3].isMine = true
+
   return board
 }
 
@@ -68,7 +70,7 @@ function renderBoard(board) {
 
 function cellClick(elCell, rowIdx, colIdx) {
   console.log(elCell)
-  console.log(gBoard[rowIdx][colIdx])
+  // console.log(gBoard[rowIdx][colIdx])
   if (!gBoard[rowIdx][colIdx].isMine) {
     elCell.innerText = gBoard[rowIdx][colIdx].minesAroundCount
   }

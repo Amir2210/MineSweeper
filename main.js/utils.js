@@ -8,10 +8,11 @@ function getRandomInt(min, max) {
 
 function findEmptyCell() {
   const emptyCells = []
-  for (var i = 0; i < gBoard.length; i++) {
-    for (var j = 0; j < gBoard[i].length; j++) {
-      const cell = gBoard[i][j]
-      if (!cell.gameElement && cell.type === EMPTY) {
+
+  for (var i = 0; i < gboard.length; i++) {
+    for (var j = 0; j < gboard[i].length; j++) {
+      const cell = gboard[i][j]
+      if (!cell.gameElement && cell.type === FLOOR) {
         emptyCells.push({ i, j })
       }
     }
