@@ -15,8 +15,8 @@ function initGame() {
 
   // console.log(gBoard[0][1])
   setMinesNegsCount(gBoard)
-
-  console.log(gBoard[0][1])
+  renderBoard(gBoard)
+  console.log(gBoard[3][3])
   // console.log("gBoard[0][0] :", gBoard[0][0].i)
   // console.log(setMinesNegsCount(gBoard, gBoard[0][1]))
   // console.log("gBoard[0][1].minesAroundCount :", gBoard[0][1].minesAroundCount)
@@ -39,6 +39,7 @@ function buildBoard() {
   }
   board[0][0].isMine = true
   board[3][3].isMine = true
+  board[2][2].isMine = true
   return board
 }
 
@@ -55,7 +56,9 @@ function renderBoard(board) {
         strHTML += MINE
       }
       strHTML += FLOOR
-
+      if (!currCell.isMine) {
+        strHTML += currCell.minesAroundCount
+      }
       strHTML += "</td>\n"
     }
     strHTML += "</tr>\n"
@@ -77,9 +80,6 @@ function setMinesNegsCount(board) {
       var currSelectedCell = board[i][j]
       var rowIdx = board[currSelectedCell.i][currSelectedCell.j].i
       var colIdx = board[currSelectedCell.i][currSelectedCell.j].j
-      console.log(currSelectedCell, rowIdx, colIdx)
-      var counter = 0
-      console.log("counter:", counter)
       if (currSelectedCell.isMine) continue
       for (var k = rowIdx - 1; k <= rowIdx + 1; k++) {
         if (k < 0 || k >= board.length) continue
@@ -88,13 +88,9 @@ function setMinesNegsCount(board) {
           if (l < 0 || l >= board[0].length) continue
           if (k === rowIdx && l === colIdx) continue
           var currCell = board[k][l]
-          console.log(currCell)
-          if (currCell.isMine) counter++
+          if (currCell.isMine) currSelectedCell.minesAroundCount++
         }
       }
-      counter++
-      console.log("counter:", counter)
-      currSelectedCell.minesAroundCount = counter
     }
   }
 }
