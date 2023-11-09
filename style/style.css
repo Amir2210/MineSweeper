@@ -8,15 +8,27 @@ body {
   text-align: center;
 }
 
-/* table {
-  margin: auto;
-  border: 3px solid red;
-} */
+h1 {
+  font-size: 2rem;
+}
+
+h1 span {
+  font-size: 2.5rem;
+}
+h2 {
+  /* font-family: "VT323", monospace; */
+  display: inline-block;
+  color: white;
+  padding: 0.5rem;
+  font-size: 1.5rem;
+  border-bottom: rgb(0, 255, 0) dashed 3px;
+  border-top: rgb(0, 255, 0) dashed 3px;
+}
 
 table,
 td {
   margin: auto;
-  border: 5px solid red;
+  border: 5px solid rgb(0, 255, 0);
   padding: 0.1rem;
   border-radius: 10px;
 }
@@ -38,7 +50,7 @@ td {
 }
 
 .floor {
-  background-color: rgb(117, 82, 150);
+  background-color: rgb(132, 1, 255);
 }
 
 .revealed {
@@ -54,11 +66,25 @@ td {
 }
 
 footer {
-  border: 5px solid red;
+  border: 5px solid rgb(0, 255, 0);
   position: absolute;
   bottom: 0;
   padding: 2rem;
   width: 99%;
   background-color: #333;
   color: #fff;
+}
+
+.loseModal {
+  width: 80px;
+  height: 50px;
+  margin: auto;
+}
+
+.resetBtn button {
+  background-color: aqua;
+  width: 55px;
+  height: 30px;
+  border-radius: 32px;
+  cursor: pointer;
 }

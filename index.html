@@ -6,13 +6,17 @@
     <title>MineSweeeper</title>
     <link rel="stylesheet" href="style/style.css" />
   </head>
-  <body onload="initGame()">
-    <h1>MineSweeeper ⛏</h1>
-
+  <body oncontextmenu="javascript:return false;" onload="initGame()">
+    <h1>MineSweeeper <span>💣</span></h1>
+    <div class="resetBtn"><button onclick="resetGame()">😀</button></div>
+    <h2>
+      <span class="lives">3</span>💘 LEFT <span class="flags">3 </span>🚩 LEFT
+    </h2>
+    <div class="loseModal hidden">YOU LOSE😭</div>
     <table>
       <tbody class="board"></tbody>
     </table>
-    <!-- <footer>Amir yankolovich</footer> -->
+    <footer>Amir yankolovich</footer>
     <script src="main.js/utils.js"></script>
     <script src="main.js/game.js"></script>
   </body>

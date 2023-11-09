@@ -2,25 +2,35 @@
 
 const MINE = "💣"
 const FLOOR = " "
+const FLAG = "🚩"
 const gLevel = {
-  SIZE: 6,
+  SIZE: 4,
   MINES: 2
 }
 
 var gBoard
 var gGame
-var gElSelectedCell = null
+var gElSelectedCell
+var gElSelectedCells = []
+var gElSelectedFlags = []
 function initGame() {
   gGame = {
-    isOn: false,
+    isOn: true,
     shownCount: 0,
     markedCount: 0,
     secsPassed: 0,
-    isFirstClick: true
+    isFirstCellClick: true,
+    lives: 3,
+    flag: 3
   }
   gBoard = buildBoard()
   renderBoard(gBoard)
   setMinesNegsCount(gBoard)
+  const elLoseModal = document.querySelector(".loseModal")
+  elLoseModal.classList.add("hidden")
+
+  const elrstBtn = document.querySelector(".resetBtn button")
+  elrstBtn.innerText = "😀"
 }
 
 function buildBoard() {
@@ -51,7 +61,7 @@ function renderBoard(board) {
       var cellClass = getClassName({ i, j })
       // currCell.isMine ? (cellClass += " floor ") : (cellClass += " floor")
       cellClass += " floor "
-      strHTML += `\t<td data-i="${i}" data-j="${j}" class="cell ${cellClass}" onclick="cellClick(this, ${i},${j})">`
+      strHTML += `\t<td data-i="${i}" data-j="${j}" class="cell ${cellClass}" onclick="cellClick(this, ${i},${j})" oncontextmenu="onCellMarked(this)">`
       // if (currCell.isMine) {
       //   strHTML += MINE
       // }
@@ -65,34 +75,89 @@ function renderBoard(board) {
   elBoard.innerHTML = strHTML
 }
 
+// function cellClick(elCell, rowIdx, colIdx) {
+//   // console.log(elCell)
+//   console.log(+elCell.dataset.i, +elCell.dataset.j)
+
+//   var board = gBoard
+//   if (!gBoard[rowIdx][colIdx].isMine && gGame.isFirstClick) {
+//     gGame.isFirstClick = false
+//     gElSelectedCell = gBoard[rowIdx][colIdx]
+//     console.log(gElSelectedCell.i, gElSelectedCell.j)
+//   } else if (!gBoard[rowIdx][colIdx].isMine) {
+//     if (
+//       +elCell.dataset.i === gElSelectedCell.i &&
+//       +elCell.dataset.j === gElSelectedCell.j
+//     ) {
+//       return
+//     }
+//     elCell.innerText = gBoard[rowIdx][colIdx].minesAroundCount
+//   }
+
+//   if (gBoard[rowIdx][colIdx].isMine && gGame.isFirstClick) {
+//     gGame.isFirstClick = false
+//     gElSelectedCell = gBoard[rowIdx][colIdx]
+
+//     console.log(gElSelectedCell.i, gElSelectedCell.j)
+//   } else if (gBoard[rowIdx][colIdx].isMine) {
+//     if (
+//       +elCell.dataset.i === gElSelectedCell.i &&
+//       +elCell.dataset.j === gElSelectedCell.j
+//     ) {
+//       return
+//     }
+//     elCell.innerText = gBoard[rowIdx][colIdx].minesAroundCount
+//   }
+//   expandShown(board, elCell, rowIdx, colIdx)
+//   elCell.classList.add("revealed")
+// }
+
 function cellClick(elCell, rowIdx, colIdx) {
-  console.log(elCell)
+  // console.log(elCell)
+  if (gGame.lives === 0) return
   console.log(+elCell.dataset.i, +elCell.dataset.j)
-  // if (
-  //   +elCell.dataset.i === gElSelectedCell.i &&
-  //   +elCell.dataset.j === gElSelectedCell.j
-  // )
-  //   return
+
   var board = gBoard
-  if (!gBoard[rowIdx][colIdx].isMine && gGame.isFirstClick) {
-    gGame.isFirstClick = false
-    gElSelectedCell = gBoard[rowIdx][colIdx]
-    console.log(gElSelectedCell.i, gElSelectedCell.j)
-  } else {
+  if (!gBoard[rowIdx][colIdx].isMine && gGame.isFirstCellClick) {
+    gGame.isFirstCellClick = false
+    // gElSelectedCell = gBoard[rowIdx][colIdx]
+    // console.log(gElSelectedCell.i, gElSelectedCell.j)
+    gElSelectedCells.push(gBoard[rowIdx][colIdx])
+    const elrstBtn = document.querySelector(".resetBtn button")
+    elrstBtn.innerText = "😜"
+  } else if (!gBoard[rowIdx][colIdx].isMine) {
+    gElSelectedCells.push(gBoard[rowIdx][colIdx])
     elCell.innerText = gBoard[rowIdx][colIdx].minesAroundCount
+
+    const elrstBtn = document.querySelector(".resetBtn button")
+    elrstBtn.innerText = "🤔"
   }
-  if (gBoard[rowIdx][colIdx].isMine && gGame.isFirstClick) {
-    gElSelectedCell = gBoard[rowIdx][colIdx]
-    gGame.isFirstClick = false
+
+  if (gBoard[rowIdx][colIdx].isMine && gGame.isFirstCellClick) {
+    // gElSelectedCell = gBoard[rowIdx][colIdx]
+    gElSelectedCells.push(gBoard[rowIdx][colIdx])
+    gGame.isFirstCellClick = false
     board[rowIdx][colIdx].isMine = false
     elCell.classList.add("revealed")
     elCell.innerText = ""
+
+    const elrstBtn = document.querySelector(".resetBtn button")
+    elrstBtn.innerText = "🤯"
   } else if (gBoard[rowIdx][colIdx].isMine) {
+    gElSelectedCells.push(gBoard[rowIdx][colIdx])
     elCell.innerText = MINE
     elCell.classList.add("mine")
+    gGame.lives--
+    const elLives = document.querySelector("h2 .lives")
+    elLives.innerText = gGame.lives
+
+    const elrstBtn = document.querySelector(".resetBtn button")
+    elrstBtn.innerText = "🤯"
   }
+  console.log(gElSelectedCells[0])
   expandShown(board, elCell, rowIdx, colIdx)
   elCell.classList.add("revealed")
+  checkGameOver()
 }
 
 function setMinesNegsCount(board) {
@@ -146,5 +211,49 @@ function expandShown(board, elCell, i, j) {
         curr.innerText = currCell.minesAroundCount
       }
     }
+  }
+}
+
+function onCellMarked(elCell) {
+  console.log(elCell.innerText)
+  if (elCell.innerText === FLAG) {
+    gBoard[+elCell.dataset.i][+elCell.dataset.j].isMarked = false
+    elCell.innerText = FLOOR
+    gGame.flag++
+  } else {
+    gBoard[+elCell.dataset.i][+elCell.dataset.j].isMarked = true
+    elCell.innerText = FLAG
+    gGame.flag--
+  }
+
+  console.log(gBoard[+elCell.dataset.i][+elCell.dataset.j])
+
+  const elFlag = document.querySelector("h2 .flags")
+  elFlag.innerText = gGame.flag
+  console.log(
+    gBoard[+elCell.dataset.i][+elCell.dataset.j].i,
+    gBoard[+elCell.dataset.i][+elCell.dataset.j].j
+  )
+
+  checkGameOver()
+}
+
+function resetGame() {
+  console.log("reset game")
+  const elLives = document.querySelector("h2 .lives")
+  elLives.innerText = 3
+  const elFlag = document.querySelector("h2 .flags")
+  elFlag.innerText = 3
+  initGame()
+}
+
+function checkGameOver() {
+  if (gGame.lives === 0) {
+    gGame.isOn = false
+    const elLoseModal = document.querySelector(".loseModal")
+    elLoseModal.classList.remove("hidden")
+    const elrstBtn = document.querySelector(".resetBtn button")
+    elrstBtn.innerText = "💀"
+    console.log("you lose")
   }
 }
