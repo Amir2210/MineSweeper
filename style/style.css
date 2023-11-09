@@ -27,20 +27,23 @@ h2 {
 
 table,
 td {
+  transition: 1s;
   margin: auto;
   border: 5px solid rgb(0, 255, 0);
-  padding: 0.1rem;
+  padding: 0.4rem;
   border-radius: 10px;
 }
 
 .board td {
-  width: 50px;
-  height: 50px;
-  transition: 0.5s;
+  transition: 0.7s;
   text-align: center;
-  border: 7px solid #333;
+  border: 2px solid red;
   border-radius: 10px;
   color: black;
+}
+
+td:hover {
+  background: aqua;
 }
 
 .cell {
@@ -66,11 +69,8 @@ td {
 }
 
 footer {
-  border: 5px solid rgb(0, 255, 0);
-  position: absolute;
   bottom: 0;
   padding: 2rem;
-  width: 99%;
   background-color: #333;
   color: #fff;
 }
@@ -83,8 +83,30 @@ footer {
 
 .resetBtn button {
   background-color: aqua;
-  width: 55px;
-  height: 30px;
+  width: 8rem;
+  height: 3rem;
   border-radius: 32px;
+  border: 3px solid rgb(0, 255, 0);
   cursor: pointer;
+  font-size: 1.5rem;
+  transition: 1s;
+}
+
+.resetBtn button:hover {
+  background-color: rgb(157, 255, 255);
+}
+
+.changeLvl {
+  margin-top: 0.7rem;
+}
+
+.changeLvl button {
+  background-color: aqua;
+  border: 3px solid rgb(132, 1, 255);
+  cursor: pointer;
+  border-radius: 32px;
+  margin: 0.8rem;
+  width: 50px;
+  height: 45px;
+  padding: 0.5rem;
 }

@@ -9,10 +9,22 @@
   <body oncontextmenu="javascript:return false;" onload="initGame()">
     <h1>MineSweeeper <span>💣</span></h1>
     <div class="resetBtn"><button onclick="resetGame()">😀</button></div>
+    <div class="changeLvl">
+      <button onclick="changeLevel(4)">4</button>
+      <button onclick="changeLevel(5)">5</button>
+      <button onclick="changeLevel(6)">6</button>
+      <button onclick="changeLevel(7)">7</button>
+      <button onclick="changeLevel(8)">8</button>
+      <button onclick="changeLevel(9)">9</button>
+      <button onclick="changeLevel(10)">10</button>
+    </div>
+
     <h2>
       <span class="lives">3</span>💘 LEFT <span class="flags">3 </span>🚩 LEFT
     </h2>
     <div class="loseModal hidden">YOU LOSE😭</div>
+    <div class="winModal hidden">YOU WIN🏆</div>
+    <h3>⏰ <span class="timer">X </span></h3>
     <table>
       <tbody class="board"></tbody>
     </table>
