@@ -6,24 +6,6 @@ function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min) + min) // The maximum is exclusive and the minimum is inclusive
 }
 
-function findEmptyCell() {
-  const emptyCells = []
-
-  for (var i = 0; i < gboard.length; i++) {
-    for (var j = 0; j < gboard[i].length; j++) {
-      const cell = gboard[i][j]
-      if (!cell.gameElement && cell.type === FLOOR) {
-        emptyCells.push({ i, j })
-      }
-    }
-  }
-
-  if (!emptyCells.length) return null
-
-  const randIdx = getRandomInt(0, emptyCells.length)
-  return emptyCells[randIdx]
-}
-
 function createMat(ROWS, COLS) {
   const mat = []
 

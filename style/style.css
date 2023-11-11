@@ -6,6 +6,7 @@ body {
   background-color: #333;
   color: #fff;
   text-align: center;
+  transition: 1s;
 }
 
 h1 {
@@ -71,8 +72,8 @@ td:hover {
 footer {
   bottom: 0;
   padding: 2rem;
-  background-color: #333;
-  color: #fff;
+  /* background-color: #333;
+  color: #fff; */
 }
 
 .loseModal {
@@ -86,7 +87,7 @@ footer {
   width: 8rem;
   height: 3rem;
   border-radius: 32px;
-  border: 3px solid rgb(0, 255, 0);
+  border: 3px solid rgb(132, 1, 255);
   cursor: pointer;
   font-size: 1.5rem;
   transition: 1s;
@@ -109,4 +110,30 @@ footer {
   width: 50px;
   height: 45px;
   padding: 0.5rem;
+  font-size: 1.1rem;
+}
+
+.clockAndSun {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.themeChangerBtn {
+  cursor: pointer;
+  margin-left: 15px;
+  width: 85px;
+  height: 45px;
+  border-radius: 32px;
+  font-size: 1.3rem;
+}
+
+.clockAndSun button.darkMode {
+  background-color: #fff;
+  border: 2px solid #6d6d6d;
+}
+
+.clockAndSun button.lightMode {
+  background-color: #333;
+  border: 2px solid #6d6d6d;
 }

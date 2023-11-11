@@ -14,6 +14,7 @@ var gElSelectedCell
 var gElSelectedCells = []
 var gInterval
 var gStartTime
+var darkIsOn = false
 
 function updateTimer() {
   const currentTime = new Date().getTime()
@@ -33,16 +34,14 @@ function initGame() {
   gGame = {
     isOn: true,
     shownCount: 0,
-    isShow: false,
     markedCount: 0,
-    secsPassed: 0,
+    bombClicked: 0,
     isFirstCellClick: true,
     lives: gLevel.MINES,
     flag: gLevel.MINES
   }
   gBoard = buildBoard()
   renderBoard(gBoard)
-  setMinesNegsCount(gBoard)
   const elLoseModal = document.querySelector(".loseModal")
   elLoseModal.classList.add("hidden")
 
@@ -76,7 +75,6 @@ function buildBoard() {
       board[i][j] = cell
     }
   }
-  putMines(board)
   return board
 }
 
@@ -89,12 +87,8 @@ function renderBoard(board) {
     for (var j = 0; j < board[0].length; j++) {
       const currCell = board[i][j]
       var cellClass = getClassName({ i, j })
-      // currCell.isMine ? (cellClass += " floor ") : (cellClass += " floor")
       cellClass += " floor "
       strHTML += `\t<td data-i="${i}" data-j="${j}" class="cell ${cellClass}" onclick="cellClick(this, ${i},${j})" oncontextmenu="onCellMarked(this)">`
-      // if (currCell.isMine) {
-      //   strHTML += MINE
-      // }
       strHTML += FLOOR
       strHTML += "</td>\n"
     }
@@ -106,13 +100,9 @@ function renderBoard(board) {
 }
 
 function cellClick(elCell, rowIdx, colIdx) {
-  // console.log(elCell)
-  // console.log(gBoard[rowIdx][colIdx])
-  // if (gBoard[rowIdx][colIdx].isShown) return
   if (gGame.lives === 0) return
 
   for (var i = 0; i < gElSelectedCells.length; i++) {
-    // console.log(gElSelectedCells[i].i, gElSelectedCells[i].j)
     if (
       gElSelectedCells[i].i === +elCell.dataset.i &&
       gElSelectedCells[i].j === +elCell.dataset.j
@@ -120,8 +110,9 @@ function cellClick(elCell, rowIdx, colIdx) {
       return
     }
   }
-  // if (gGame.markedCount === gLevel.MINES) return
-  // console.log(+elCell.dataset.i, +elCell.dataset.j)
+
+  if (gBoard[rowIdx][colIdx].isShown) return
+
   if (gGame.isFirstCellClick) {
     startTimer()
   }
@@ -132,25 +123,22 @@ function cellClick(elCell, rowIdx, colIdx) {
     // console.log(gGame.shownCount)
     gBoard[rowIdx][colIdx].isShown = true
     gGame.isFirstCellClick = false
-    // gElSelectedCell = gBoard[rowIdx][colIdx]
-    // console.log(gElSelectedCell.i, gElSelectedCell.j)
+
     gElSelectedCells.push(gBoard[rowIdx][colIdx])
     const elrstBtn = document.querySelector(".resetBtn button")
     elrstBtn.innerText = "😜"
+    putMines(board)
+    setMinesNegsCount(board)
   } else if (!gBoard[rowIdx][colIdx].isMine) {
-    // gGame.shownCount += expandShown(board, elCell, rowIdx, colIdx)
-    // console.log(gGame.shownCount)
     gBoard[rowIdx][colIdx].isShown = true
     gElSelectedCells.push(gBoard[rowIdx][colIdx])
     elCell.innerText = gBoard[rowIdx][colIdx].minesAroundCount
-
     const elrstBtn = document.querySelector(".resetBtn button")
     elrstBtn.innerText = "😁"
   }
 
   if (gBoard[rowIdx][colIdx].isMine && gGame.isFirstCellClick) {
-    gGame.shownCount++
-    gGame.markedCount++
+    // gGame.markedCount++
     gBoard[rowIdx][colIdx].isShown = true
     gElSelectedCells.push(gBoard[rowIdx][colIdx])
     gGame.isFirstCellClick = false
@@ -159,15 +147,16 @@ function cellClick(elCell, rowIdx, colIdx) {
     elCell.innerText = ""
     const elrstBtn = document.querySelector(".resetBtn button")
     elrstBtn.innerText = "🤔"
+    putMines(board)
+    setMinesNegsCount(board)
   } else if (gBoard[rowIdx][colIdx].isMine) {
-    gGame.markedCount++
-    console.log(gGame.shownCount)
+    gGame.shownCount++
+    gGame.bombClicked++
     gBoard[rowIdx][colIdx].isShown = true
     gElSelectedCells.push(gBoard[rowIdx][colIdx])
     elCell.innerText = MINE
     elCell.classList.add("mine")
     gGame.lives--
-
     const elLives = document.querySelector("h2 .lives")
     elLives.innerText = gGame.lives
 
@@ -202,14 +191,32 @@ function setMinesNegsCount(board) {
 }
 
 function putMines(board) {
-  // board[0][0].isMine = true
-  // board[2][2].isMine = true
-  // board[3][3].isMine = true
   for (var i = 0; i < gLevel.MINES; i++) {
-    board[getRandomInt(0, gLevel.SIZE)][
-      getRandomInt(0, gLevel.SIZE)
-    ].isMine = true
+    var minesIdx = []
+    const minesLocation = findEmptyCell()
+    minesIdx.push(minesLocation)
+    board[minesLocation.i][minesLocation.j].isMine = true
   }
+}
+
+function findEmptyCell() {
+  var emptyCells = []
+  var shownCells = []
+  for (var i = 0; i < gBoard.length; i++) {
+    for (var j = 0; j < gBoard[i].length; j++) {
+      if (!gBoard[i][j].isShown) {
+        emptyCells.push({ i, j })
+      } else {
+        shownCells.push({ i, j })
+      }
+    }
+  }
+  // console.log("shownCells:", shownCells)
+  // console.log("emptyCells:", emptyCells)
+  if (emptyCells.length === 0) return null
+
+  const idx = getRandomInt(0, emptyCells.length)
+  return emptyCells.splice(idx, 1)[0]
 }
 
 function expandShown(board, elCell, i, j) {
@@ -217,16 +224,14 @@ function expandShown(board, elCell, i, j) {
   var colIdx = j
   var board = board
   var counter = 0
-  console.log(gBoard[rowIdx][colIdx])
+  // console.log(gBoard[rowIdx][colIdx])
   if (gBoard[rowIdx][colIdx].isMine) {
     const curr = document.querySelector(`[data-i="${i}"][data-j="${j}"]`)
     curr.classList.add("revealed")
     return
   }
   gBoard[rowIdx][colIdx].isShown = true
-  // console.log(gBoard[rowIdx][colIdx])
   gGame.shownCount++
-  console.log("gGame.shownCount:", gGame.shownCount)
   for (var i = rowIdx - 1; i <= rowIdx + 1; i++) {
     if (i < 0 || i >= board.length) continue
 
@@ -237,10 +242,8 @@ function expandShown(board, elCell, i, j) {
       if (!currCell.isShown && !currCell.isMine) {
         counter++
         gGame.shownCount++
-        // console.log(currCell)
-        console.log(counter)
+        currCell.isShown = true
       }
-      currCell.isShown = true
       if (!currCell.isMine) {
         const curr = document.querySelector(`[data-i="${i}"][data-j="${j}"]`)
         // console.log(curr.dataset.i, curr.dataset.j)
@@ -254,21 +257,27 @@ function expandShown(board, elCell, i, j) {
 }
 
 function onCellMarked(elCell) {
-  console.log(elCell.innerText)
+  console.log(gBoard[elCell.dataset.i][elCell.dataset.j])
   if (elCell.innerText === FLAG) {
     gBoard[+elCell.dataset.i][+elCell.dataset.j].isMarked = false
+    gBoard[elCell.dataset.i][elCell.dataset.j].isShown = false
     elCell.innerText = FLOOR
     gGame.flag++
+    gGame.shownCount--
   } else {
     gBoard[+elCell.dataset.i][+elCell.dataset.j].isMarked = true
+    gBoard[elCell.dataset.i][elCell.dataset.j].isShown = true
     elCell.innerText = FLAG
     gGame.flag--
+    // gGame.shownCount++
   }
   const elFlag = document.querySelector("h2 .flags")
   elFlag.innerText = gGame.flag
   if (gBoard[+elCell.dataset.i][+elCell.dataset.j].isMine) {
+    gBoard[elCell.dataset.i][elCell.dataset.j].isShown = true
     gGame.markedCount++
-    console.log(gGame.markedCount)
+    gGame.shownCount++
+    // console.log(gGame.markedCount)
   }
   checkGameOver()
 }
@@ -290,8 +299,13 @@ function checkGameOver() {
     stopTimer()
   }
   if (
-    gGame.markedCount === gLevel.MINES &&
-    gGame.shownCount === gLevel.SIZE * gLevel.SIZE - gLevel.MINES
+    gGame.markedCount === gLevel.MINES ||
+    (gGame.shownCount >= gLevel.SIZE * gLevel.SIZE &&
+      gGame.markedCount === gLevel.MINES) ||
+    (gGame.shownCount >= gLevel.SIZE * gLevel.SIZE &&
+      gGame.markedCount >= gGame.bombClicked) ||
+    (gGame.shownCount - 1 > gLevel.SIZE * gLevel.SIZE &&
+      gGame.markedCount >= gGame.bombClicked)
   ) {
     const elWinModal = document.querySelector(".winModal")
     elWinModal.classList.remove("hidden")
@@ -305,4 +319,58 @@ function changeLevel(level) {
   gLevel.MINES = level - 1
   stopTimer()
   initGame()
+}
+
+function switchTheme() {
+  if (!darkIsOn) {
+    darkIsOn = !darkIsOn
+    const elThemeBtn = document.querySelector(".clockAndSun button")
+    elThemeBtn.classList.remove("darkMode")
+    elThemeBtn.classList.add("lightMode")
+    elThemeBtn.innerText = "🌛"
+    document.querySelector("body").style.backgroundColor = "#F0F0F0"
+    document.querySelector("body").style.color = "#333"
+    const elH2 = document.querySelector("h2")
+    elH2.style.color = "#333"
+    elH2.style.borderBottom = "#F45050 dashed 3px"
+    elH2.style.borderTop = "#F45050 dashed 3px"
+    document.querySelector("footer").style.color = "#333"
+    document.querySelector(".timer").style.color = "#333"
+    const elrstBtn = document.querySelector(".resetBtn button")
+    elrstBtn.style.backgroundColor = "#3C486B"
+    elrstBtn.style.border = "3px solid #F45050"
+    const elchangeLevelBtns = document.querySelectorAll(".changeLvl button")
+    for (var i = 0; i < elchangeLevelBtns.length; i++) {
+      elchangeLevelBtns[i].style.backgroundColor = "#3C486B"
+      elchangeLevelBtns[i].style.border = "3px solid #F45050"
+      elchangeLevelBtns[i].style.color = "#F0F0F0"
+    }
+    const elTable = document.querySelector("table")
+    elTable.style.border = "#F45050 solid 3px"
+  } else {
+    darkIsOn = !darkIsOn
+    const elThemeBtn = document.querySelector(".clockAndSun button")
+    elThemeBtn.classList.remove("lightMode")
+    elThemeBtn.classList.add("darkMode")
+    elThemeBtn.innerText = "🌞"
+    document.querySelector("body").style.backgroundColor = "#333"
+    document.querySelector("body").style.color = "#fff"
+    const elH2 = document.querySelector("h2")
+    elH2.style.color = "#fff"
+    elH2.style.borderBottom = "rgb(0, 255, 0) dashed 3px"
+    elH2.style.borderTop = "rgb(0, 255, 0) dashed 3px"
+    document.querySelector("footer").style.color = "#fff"
+    document.querySelector(".timer").style.color = "#fff"
+    const elrstBtn = document.querySelector(".resetBtn button")
+    elrstBtn.style.backgroundColor = "aqua"
+    elrstBtn.style.border = "3px solid rgb(132, 1, 255)"
+    const elchangeLevelBtns = document.querySelectorAll(".changeLvl button")
+    for (var i = 0; i < elchangeLevelBtns.length; i++) {
+      elchangeLevelBtns[i].style.backgroundColor = "aqua"
+      elchangeLevelBtns[i].style.border = "3px solid rgb(132, 1, 255)"
+      elchangeLevelBtns[i].style.color = "#333"
+    }
+    const elTable = document.querySelector("table")
+    elTable.style.border = "rgb(0, 255, 0) solid 3px"
+  }
 }
