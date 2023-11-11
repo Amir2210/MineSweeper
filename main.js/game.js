@@ -246,8 +246,9 @@ function expandShown(board, elCell, i, j) {
       }
       if (!currCell.isMine) {
         const curr = document.querySelector(`[data-i="${i}"][data-j="${j}"]`)
+        // console.log(curr)
         // console.log(curr.dataset.i, curr.dataset.j)
-        // console.log(gBoard[curr.dataset.i][curr.dataset.j].isShown)
+        console.log(gBoard[curr.dataset.i][curr.dataset.j])
         curr.classList.add("revealed")
         curr.innerText = currCell.minesAroundCount
       }
@@ -304,8 +305,10 @@ function checkGameOver() {
       gGame.markedCount === gLevel.MINES) ||
     (gGame.shownCount >= gLevel.SIZE * gLevel.SIZE &&
       gGame.markedCount >= gGame.bombClicked) ||
-    (gGame.shownCount - 1 > gLevel.SIZE * gLevel.SIZE &&
-      gGame.markedCount >= gGame.bombClicked)
+    (gGame.shownCount - 1 >= gLevel.SIZE * gLevel.SIZE &&
+      gGame.markedCount >= gGame.bombClicked) ||
+    (gGame.shownCount - 1 >= gLevel.SIZE * gLevel.SIZE &&
+      gGame.markedCount > gGame.bombClicked)
   ) {
     const elWinModal = document.querySelector(".winModal")
     elWinModal.classList.remove("hidden")
